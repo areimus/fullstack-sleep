@@ -1,6 +1,3 @@
-### Docker ###
-Dockerfile
-
 ### Gradle ###
 .gradle
 build/
