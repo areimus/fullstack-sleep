@@ -18,7 +18,7 @@ class UserController(
                 onSuccess = { user -> ResponseEntity.ok(user) },
                 onFailure = { error ->
                     ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Failed to create user: ${error.localizedMessage}")
+                        .body(mapOf("error" to "Failed to create user: ${error.localizedMessage}"))
                 }
             )
     }
@@ -30,7 +30,7 @@ class UserController(
             ResponseEntity.ok(user)
         } else {
             ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("User not found with username: $username")
+                .body(mapOf("error" to "User not found with username: $username"))
         }
     }
 }

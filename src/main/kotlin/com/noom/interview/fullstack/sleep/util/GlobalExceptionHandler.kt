@@ -1,10 +1,12 @@
+package com.noom.interview.fullstack.sleep.util
+
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.http.ResponseEntity
 import org.springframework.http.HttpStatus
 
 @RestControllerAdvice
-class GlobalAPIExceptionHandler {
+class GlobalExceptionHandler {
 
     // Already existing generic handler
     @ExceptionHandler(Exception::class)
