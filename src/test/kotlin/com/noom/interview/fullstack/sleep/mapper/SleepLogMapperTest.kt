@@ -1,6 +1,6 @@
 package com.noom.interview.fullstack.sleep.mapper
 
-import com.noom.interview.fullstack.sleep.models.SleepLogs
+import com.noom.interview.fullstack.sleep.models.SleepLog
 import com.noom.interview.fullstack.sleep.models.User
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -24,7 +24,7 @@ class SleepLogMapperTest {
                 driver = "org.h2.Driver"
             )
             transaction {
-                create(SleepLogs)
+                create(SleepLog)
             }
         }
     }
@@ -45,20 +45,20 @@ class SleepLogMapperTest {
         }
 
         val insertedId = transaction {
-            SleepLogs.insert {
+            SleepLog.insert {
                 it[userId] = 1L
-                it[SleepLogs.entryDate] = entryDate
-                it[SleepLogs.bedTime] = bedTime
-                it[SleepLogs.wakeTime] = wakeTime
+                it[SleepLog.entryDate] = entryDate
+                it[SleepLog.bedTime] = bedTime
+                it[SleepLog.wakeTime] = wakeTime
                 it[totalTimeInBed] = 8 * 60 * 60
                 it[morningFeeling] = "GOOD"
                 it[createdAt] = now
                 it[updatedAt] = now
-            } get SleepLogs.id
+            } get SleepLog.id
         }
 
         val sleepLogRow = transaction {
-            SleepLogs.selectAll().where { SleepLogs.id eq insertedId }
+            SleepLog.selectAll().where { SleepLog.id eq insertedId }
                 .single()
         }
 
