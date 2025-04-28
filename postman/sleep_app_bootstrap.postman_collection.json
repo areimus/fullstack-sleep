@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "0cc804ea-d10f-4693-8e1b-806461770357",
+		"name": "Sleep App Bootstrap",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44484890"
+	},
+	"item": [
+		{
+			"name": "Create User #1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let responseJson = pm.response.json();",
+							"pm.environment.set(\"user1\", responseJson.username);",
+							"pm.environment.set(\"userId1\", responseJson.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{$randomUserName}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve User #1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/findByUsername?username={{user1}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"findByUsername"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "{{user1}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve Non-Existent User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/findByUsername?username=beepboopmissing",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"findByUsername"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "beepboopmissing"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User #1 Create Log (Reverse Chronological Order)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const date = new Date();",
+							"const offsetKey = pm.environment.get(\"userId1\") + \"_entryDateOffset\";",
+							"const offset = parseInt(pm.environment.get(offsetKey) || 0, 10);",
+							"date.setDate(date.getDate() - offset);",
+							"const entryDate = date.toISOString().split('T')[0];",
+							"",
+							"const randomBedHour = Math.floor(Math.random() * 3) + 21; // 21, 22, or 23",
+							"const bedTime = `${randomBedHour.toString().padStart(2, '0')}:00:00`;",
+							"",
+							"const randomWakeHour = Math.floor(Math.random() * 4) + 5; // 5, 6, 7, or 8",
+							"const wakeTime = `${randomWakeHour.toString().padStart(2, '0')}:00:00`;",
+							"",
+							"const feelings = [\"GOOD\", \"OK\", \"BAD\"];",
+							"const morningFeeling = feelings[Math.floor(Math.random() * feelings.length)];",
+							"",
+							"// Save these into environment variables",
+							"pm.environment.set(\"entryDate\", entryDate);",
+							"pm.environment.set(offsetKey, offset + 1);",
+							"pm.environment.set(\"bedTime\", bedTime);",
+							"pm.environment.set(\"wakeTime\", wakeTime);",
+							"pm.environment.set(\"morningFeeling\", morningFeeling);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"entryDate\": \"{{entryDate}}\",\n    \"bedTime\": \"{{bedTime}}\",\n    \"wakeTime\": \"{{wakeTime}}\",\n    \"morningFeeling\": \"{{morningFeeling}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/{{userId1}}/logs",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"{{userId1}}",
+						"logs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User #1 30 Day Report",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/{{userId1}}/logs/report",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"{{userId1}}",
+						"logs",
+						"report"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User #1 Last Night",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/{{userId1}}/logs/lastNight",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"{{userId1}}",
+						"logs",
+						"lastNight"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"const response = pm.response.json();",
+					"pm.collectionVariables.set(\"userId\" + response.username, response.id);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
