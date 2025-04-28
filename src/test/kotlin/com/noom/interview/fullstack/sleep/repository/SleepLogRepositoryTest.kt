@@ -1,7 +1,7 @@
 package com.noom.interview.fullstack.sleep.repository
 
 import com.noom.interview.fullstack.sleep.models.SleepLogs
-import com.noom.interview.fullstack.sleep.models.Users
+import com.noom.interview.fullstack.sleep.models.User
 import com.noom.interview.fullstack.sleep.util.MorningFeeling
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -24,7 +24,7 @@ class SleepLogRepositoryTest {
             driver = "org.h2.Driver"
         )
         transaction {
-            SchemaUtils.create(Users, SleepLogs)
+            SchemaUtils.create(User, SleepLogs)
         }
     }
 
@@ -32,16 +32,16 @@ class SleepLogRepositoryTest {
     fun cleanDatabase() {
         transaction {
             SleepLogs.deleteAll()
-            Users.deleteAll()
+            User.deleteAll()
         }
     }
 
     private fun insertTestUser(username: String = "testuser-sleeplogrepository"): Long {
         return transaction {
-            Users.insert {
-                it[Users.username] = username
+            User.insert {
+                it[User.username] = username
                 it[createdAt] = LocalDateTime.now()
-            } get Users.id
+            } get User.id
         }
     }
 
@@ -155,7 +155,7 @@ class SleepLogRepositoryTest {
         val today = now.toLocalDate()
 
         transaction {
-            Users.insert {
+            User.insert {
                 it[id] = userId
                 it[username] = "test-user-averages"
                 it[createdAt] = now

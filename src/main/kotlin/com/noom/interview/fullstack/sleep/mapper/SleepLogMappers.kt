@@ -7,6 +7,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
+/**
+ * Helper function for generating a SleepLogDTO from a ResultRow
+ */
 fun ResultRow.toSleepLogDTO() = SleepLogDTO(
     id = this[SleepLogs.id],
     userId = this[SleepLogs.userId],
@@ -19,6 +22,9 @@ fun ResultRow.toSleepLogDTO() = SleepLogDTO(
     updatedAt = this[SleepLogs.updatedAt]
 )
 
+/**
+ * Helper function to generate a SleepLogDTO from the corresponding set of data represented
+ */
 fun toSleepLogDTO(
     id: Long,
     userId: Long,

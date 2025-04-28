@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
-    // Already existing generic handler
+    /**
+     * Catch all exception handler for the API
+     */
     @ExceptionHandler(Exception::class)
     fun handleAllExceptions(ex: Exception): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -18,7 +20,10 @@ class GlobalExceptionHandler {
             ))
     }
 
-    // 🆕 New clean handler for IllegalArgumentException
+    /**
+     * Handler for the instances of IllegalArgumentException, used when APIs attempt to
+     * create duplicate data
+     */
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgument(ex: IllegalArgumentException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
