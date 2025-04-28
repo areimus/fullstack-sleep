@@ -50,6 +50,21 @@ class SleepLogController(
         }
     }
 
+    @GetMapping("/lastNight")
+    fun getLastNightSleepLog(
+        @PathVariable userId: Long
+    ): ResponseEntity<Any> {
+        val entryDate = LocalDate.now()
+        val log = sleepLogRepository.getSleepLog(userId, entryDate)
+        return if (log != null) {
+            ResponseEntity.ok(log)
+        } else {
+            ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(mapOf("error" to "Sleep log not found for userId $userId on $entryDate"))
+        }
+    }
+
+
     @GetMapping
     fun getSleepLogs(
         @PathVariable userId: Long,
@@ -62,5 +77,19 @@ class SleepLogController(
             endDate
         )
         return ResponseEntity.ok(logs)
+    }
+
+    @GetMapping("/report")
+    fun getSleepLogReport(
+        @PathVariable userId: Long,
+        @RequestParam(required = false, defaultValue = "30") days: Long
+    ): ResponseEntity<Any> {
+        val report = sleepLogRepository.getSleepLogReport(userId, days)
+        return if (report != null) {
+            ResponseEntity.ok(report)
+        } else {
+            ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(mapOf("error" to "No sleep logs found for userId $userId in the last $days days"))
+        }
     }
 }

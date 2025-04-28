@@ -1,5 +1,6 @@
 package com.noom.interview.fullstack.sleep.controller
 
+import com.noom.interview.fullstack.sleep.data.SleepLogAveragesDTO
 import com.noom.interview.fullstack.sleep.data.SleepLogDTO
 import com.noom.interview.fullstack.sleep.repository.SleepLogRepository
 import com.noom.interview.fullstack.sleep.util.MorningFeeling
@@ -36,7 +37,7 @@ class SleepLogControllerTest(@Autowired val mockMvc: MockMvc) {
     }
 
     @Test
-    fun `should create sleep log successfully`() {
+    fun `createSleepLog should create sleep log successfully`() {
         val userId = 1L
         val entryDate = LocalDate.now()
         val bedTime = LocalTime.of(22, 0)
@@ -73,7 +74,7 @@ class SleepLogControllerTest(@Autowired val mockMvc: MockMvc) {
     }
 
     @Test
-    fun `should fail to create sleep log`() {
+    fun `createSleepLog should fail to create sleep log with duplicate`() {
         val userId = 1L
         val entryDate = LocalDate.now()
         val bedTime = LocalTime.of(22, 0)
@@ -101,7 +102,7 @@ class SleepLogControllerTest(@Autowired val mockMvc: MockMvc) {
     }
 
     @Test
-    fun `should return sleep log by userId and entryDate`() {
+    fun `getSleepLog should return sleep log by userId and entryDate`() {
         val userId = 1L
         val entryDate = LocalDate.of(2025, 4, 26)
         val sleepLogDTO = SleepLogDTO(
@@ -125,6 +126,34 @@ class SleepLogControllerTest(@Autowired val mockMvc: MockMvc) {
             content { contentTypeCompatibleWith(MediaType.APPLICATION_JSON) }
             jsonPath("$.userId") { value(userId) }
             jsonPath("$.entryDate") { value(entryDate.toString()) }
+        }
+    }
+
+    @Test
+    fun `get last night log will return a sleep log with an entry date of today`() {
+        val userId = 1L
+        val todayDate = LocalDate.now()
+        val sleepLogDTO = SleepLogDTO(
+            id = 1L,
+            userId = userId,
+            entryDate = todayDate,
+            bedTime = LocalTime.of(22, 0),
+            wakeTime = LocalTime.of(6, 0),
+            totalTimeInBed = 28800, // 8 hours
+            morningFeeling = "BAD",
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
+        )
+
+        whenever(mockSleepLogRepository.getSleepLog(userId, todayDate)).thenReturn(sleepLogDTO)
+
+        mockMvc.get("/users/{userId}/logs/lastNight", userId) {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isOk() }
+            content { contentTypeCompatibleWith(MediaType.APPLICATION_JSON) }
+            jsonPath("$.userId") { value(userId) }
+            jsonPath("$.entryDate") { value(todayDate.toString()) }
         }
     }
 
@@ -204,6 +233,37 @@ class SleepLogControllerTest(@Autowired val mockMvc: MockMvc) {
             status { isOk() }
             content { contentTypeCompatibleWith(MediaType.APPLICATION_JSON) }
             content { json("[]") }
+        }
+    }
+
+    @Test
+    fun `should return sleep log report successfully`() {
+        val userId = 1L
+        val startDate = LocalDate.now().minusDays(30)
+        val endDate = LocalDate.now()
+        val report = SleepLogAveragesDTO(
+            startDate = startDate,
+            endDate = endDate,
+            averageTotalTimeInBedSeconds = 19909,
+            averageBedTime = LocalTime.of(22, 22),
+            averageWakeTime = LocalTime.of(6, 6),
+            morningFeelingFrequencies = mapOf("GOOD" to 17, "OKAY" to 10, "BAD" to 3)
+        )
+
+        whenever(mockSleepLogRepository.getSleepLogReport(userId, 30))
+            .thenReturn(report)
+
+        mockMvc.get("/users/$userId/logs/report") {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isOk() }
+            content { contentTypeCompatibleWith(MediaType.APPLICATION_JSON) }
+            jsonPath("$.startDate") { value(startDate.toString()) }
+            jsonPath("$.endDate") { value(endDate.toString()) }
+            jsonPath("$.averageTotalTimeInBedSeconds") { value(19909) }
+            jsonPath("$.morningFeelingFrequencies.GOOD") { value(17) }
+            jsonPath("$.morningFeelingFrequencies.OKAY") { value(10) }
+            jsonPath("$.morningFeelingFrequencies.BAD") { value(3) }
         }
     }
 }

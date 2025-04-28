@@ -1,5 +1,6 @@
 package com.noom.interview.fullstack.sleep.repository
 
+import com.noom.interview.fullstack.sleep.data.SleepLogAveragesDTO
 import com.noom.interview.fullstack.sleep.models.SleepLogs
 import com.noom.interview.fullstack.sleep.data.SleepLogDTO
 import com.noom.interview.fullstack.sleep.mapper.toSleepLogDTO
@@ -76,7 +77,35 @@ class SleepLogRepository {
         SleepLogs.selectAll()
             .where { (SleepLogs.userId eq userId) and (SleepLogs.entryDate.between(startDate, endDate)) }
             .orderBy(SleepLogs.entryDate to SortOrder.ASC)
-            .limit(32)
             .map { row -> row.toSleepLogDTO() }
+    }
+
+    fun getSleepLogReport(userId: Long, reportDays: Long): SleepLogAveragesDTO? {
+        val endDate = LocalDate.now()
+        val startDate = endDate.minusDays(reportDays)
+
+        val logs = getSleepLogs(userId, startDate, endDate)
+
+        if (logs.isEmpty()) return null
+
+        val avgTotalTimeInBed = logs.map { it.totalTimeInBed }.average().toInt()
+
+        val avgBedTimeSeconds = logs.map { it.bedTime.toSecondOfDay() }.average().toInt()
+        val avgWakeTimeSeconds = logs.map { it.wakeTime.toSecondOfDay() }.average().toInt()
+
+        val avgBedTime = LocalTime.ofSecondOfDay(avgBedTimeSeconds.toLong())
+        val avgWakeTime = LocalTime.ofSecondOfDay(avgWakeTimeSeconds.toLong())
+
+        val feelingFrequencies = logs.groupingBy { it.morningFeeling }
+            .eachCount()
+
+        return SleepLogAveragesDTO(
+            startDate = startDate,
+            endDate = endDate,
+            averageTotalTimeInBedSeconds = avgTotalTimeInBed,
+            averageBedTime = avgBedTime,
+            averageWakeTime = avgWakeTime,
+            morningFeelingFrequencies = feelingFrequencies
+        )
     }
 }
