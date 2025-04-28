@@ -28,6 +28,10 @@ git clone git@github.com:areimus/fullstack-sleep.git
 ``
 
 ``
+cd fullstack-sleep
+``
+
+``
 docker-compose up --build
 ``
 
