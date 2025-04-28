@@ -30,7 +30,14 @@ class SleepLogRepository {
     ): Result<SleepLogDTO> {
         return try {
             transaction {
-                val totalTimeInBed = ChronoUnit.SECONDS.between(bedTime, wakeTime).toInt()
+                val bedDateTime = entryDate.atTime(bedTime)
+                val wakeDateTime = if (wakeTime.isBefore(bedTime)) {
+                    entryDate.plusDays(1).atTime(wakeTime)
+                } else {
+                    entryDate.atTime(wakeTime)
+                }
+
+                val totalTimeInBed = ChronoUnit.SECONDS.between(bedDateTime, wakeDateTime).toInt()
                 val now = LocalDateTime.now()
                 val insertedId = SleepLogs.insert {
                     it[SleepLogs.userId] = userId
