@@ -1,6 +1,6 @@
 package com.noom.interview.fullstack.sleep.mapper
 
-import com.noom.interview.fullstack.sleep.models.Users
+import com.noom.interview.fullstack.sleep.models.User
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.SchemaUtils.create
@@ -22,7 +22,7 @@ class UserMapperTest {
                 driver = "org.h2.Driver"
             )
             transaction {
-                create(Users)
+                create(User)
             }
         }
     }
@@ -32,14 +32,14 @@ class UserMapperTest {
         val now = LocalDateTime.now()
 
         val insertedId = transaction {
-            Users.insert {
+            User.insert {
                 it[username] = "testuser"
                 it[createdAt] = now
-            } get Users.id
+            } get User.id
         }
 
         val userRow = transaction {
-            Users.selectAll().where { Users.id eq insertedId }
+            User.selectAll().where { User.id eq insertedId }
                 .single()
         }
 

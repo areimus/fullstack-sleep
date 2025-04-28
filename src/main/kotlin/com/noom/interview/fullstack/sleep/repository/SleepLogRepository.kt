@@ -18,9 +18,24 @@ import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import java.sql.SQLException
 
+/**
+ * A repository containing the functionality required to create new sleep logs and
+ * fetch individual or sets of sleep logs.
+ */
 class SleepLogRepository {
     private val logger = LoggerFactory.getLogger(SleepLogRepository::class.java)
 
+    /**
+     * Create a new sleep log entry
+     *
+     * @param userId Long The User associated with the sleep log
+     * @param entryDate LocalDate The date the sleep log contains data for
+     * @param bedTime LocalTime The recorded bedtime
+     * @param wakeTime LocalTime The record wake-up time
+     * @param morningFeeling MorningFeeling One of the valid MorningFeeling enum values
+     * @throws Exception When attempting to create a duplicate entry on the userId-entryDate unique index
+     * @return SleepLogDTO
+     */
     fun createSleepLog(
         userId: Long,
         entryDate: LocalDate,
@@ -71,6 +86,13 @@ class SleepLogRepository {
         }
     }
 
+    /**
+     * Return a single sleep log entry
+     *
+     * @param userId Long The User associated with the sleep log
+     * @param entryDate LocalDate The date of the sleep log to retrieve
+     * @return SleepLogDTO or null if no sleep log record exists
+     */
     fun getSleepLog(userId: Long, entryDate: LocalDate): SleepLogDTO? = transaction {
         SleepLogs.selectAll()
             .where {
@@ -80,6 +102,14 @@ class SleepLogRepository {
             ?.toSleepLogDTO()
     }
 
+    /**
+     * Get a set of sleep log entries for a given time range
+     *
+     * @param userId Long The User associated with the sleep log
+     * @param startDate LocalDate The start date of the range to return sleep log records for
+     * @param endDate LocalDate The end date of the range to return sleep log records for
+     * @return List<SleepLogDTO>
+     */
     fun getSleepLogs(userId: Long, startDate: LocalDate, endDate: LocalDate): List<SleepLogDTO> = transaction {
         SleepLogs.selectAll()
             .where { (SleepLogs.userId eq userId) and (SleepLogs.entryDate.between(startDate, endDate)) }
@@ -87,6 +117,14 @@ class SleepLogRepository {
             .map { row -> row.toSleepLogDTO() }
     }
 
+    /**
+     * Return an N-Day sleep log report containing averages for bed/wake time, total time in
+     * bed and morning feeling frequencies.
+     *
+     *  @param userId Long The User associated with the sleep log
+     *  @param reportDays Long The maximum number of days to include in the report
+     *  @return SleepLogAveragesDTO or null if no records are found in the requested timeframe
+     */
     fun getSleepLogReport(userId: Long, reportDays: Long): SleepLogAveragesDTO? {
         val endDate = LocalDate.now()
         val startDate = endDate.minusDays(reportDays)

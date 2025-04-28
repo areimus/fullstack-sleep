@@ -1,7 +1,7 @@
 package com.noom.interview.fullstack.sleep.mapper
 
 import com.noom.interview.fullstack.sleep.models.SleepLogs
-import com.noom.interview.fullstack.sleep.models.Users
+import com.noom.interview.fullstack.sleep.models.User
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.SchemaUtils.create
@@ -38,10 +38,10 @@ class SleepLogMapperTest {
 
         val insertedUserId = transaction {
             // ✅ Insert a dummy user first
-            Users.insert {
+            User.insert {
                 it[username] = "testuser-forsleeplog"
                 it[createdAt] = now
-            } get Users.id
+            } get User.id
         }
 
         val insertedId = transaction {
