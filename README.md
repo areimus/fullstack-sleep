@@ -24,7 +24,7 @@ Designed to manage users, track nightly sleep sessions, and calculate sleep qual
 
 ## **Quick Start**
 ``
-git clone git@github.com:areimus/fullstack-sleep.git
+git clone https://github.com/areimus/fullstack-sleep.git
 ``
 
 ``
@@ -57,6 +57,7 @@ You can import the API Collection into Postman:
 
 - [Download Collection](./postman/sleep-api.postman_collection.json)
   Or manually by importing the file into Postman (**File → Import → Upload Files**).
+- An environment called 'Local Server Testing' is provided which configures Postman to point at the locally running API server.
 
 
 > The collection includes pre-configured examples for creating users, logging sleep data, retrieving single day and N-Day reports
