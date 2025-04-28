@@ -1,7 +1,7 @@
 package com.noom.interview.fullstack.sleep.mapper
 
 import com.noom.interview.fullstack.sleep.data.SleepLogDTO
-import com.noom.interview.fullstack.sleep.models.SleepLogs
+import com.noom.interview.fullstack.sleep.models.SleepLog
 import org.jetbrains.exposed.sql.ResultRow
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -11,15 +11,15 @@ import java.time.LocalTime
  * Helper function for generating a SleepLogDTO from a ResultRow
  */
 fun ResultRow.toSleepLogDTO() = SleepLogDTO(
-    id = this[SleepLogs.id],
-    userId = this[SleepLogs.userId],
-    entryDate = this[SleepLogs.entryDate],
-    bedTime = this[SleepLogs.bedTime],
-    wakeTime = this[SleepLogs.wakeTime],
-    totalTimeInBed = this[SleepLogs.totalTimeInBed],
-    morningFeeling = this[SleepLogs.morningFeeling],
-    createdAt = this[SleepLogs.createdAt],
-    updatedAt = this[SleepLogs.updatedAt]
+    id = this[SleepLog.id],
+    userId = this[SleepLog.userId],
+    entryDate = this[SleepLog.entryDate],
+    bedTime = this[SleepLog.bedTime],
+    wakeTime = this[SleepLog.wakeTime],
+    totalTimeInBed = this[SleepLog.totalTimeInBed],
+    morningFeeling = this[SleepLog.morningFeeling],
+    createdAt = this[SleepLog.createdAt],
+    updatedAt = this[SleepLog.updatedAt]
 )
 
 /**

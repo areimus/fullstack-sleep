@@ -1,7 +1,7 @@
 package com.noom.interview.fullstack.sleep.repository
 
 import com.noom.interview.fullstack.sleep.data.SleepLogAveragesDTO
-import com.noom.interview.fullstack.sleep.models.SleepLogs
+import com.noom.interview.fullstack.sleep.models.SleepLog
 import com.noom.interview.fullstack.sleep.data.SleepLogDTO
 import com.noom.interview.fullstack.sleep.mapper.toSleepLogDTO
 import com.noom.interview.fullstack.sleep.util.MorningFeeling
@@ -54,16 +54,16 @@ class SleepLogRepository {
 
                 val totalTimeInBed = ChronoUnit.SECONDS.between(bedDateTime, wakeDateTime).toInt()
                 val now = LocalDateTime.now()
-                val insertedId = SleepLogs.insert {
-                    it[SleepLogs.userId] = userId
-                    it[SleepLogs.entryDate] = entryDate
-                    it[SleepLogs.bedTime] = bedTime
-                    it[SleepLogs.wakeTime] = wakeTime
-                    it[SleepLogs.totalTimeInBed] = totalTimeInBed
-                    it[SleepLogs.morningFeeling] = morningFeeling.toString()
+                val insertedId = SleepLog.insert {
+                    it[SleepLog.userId] = userId
+                    it[SleepLog.entryDate] = entryDate
+                    it[SleepLog.bedTime] = bedTime
+                    it[SleepLog.wakeTime] = wakeTime
+                    it[SleepLog.totalTimeInBed] = totalTimeInBed
+                    it[SleepLog.morningFeeling] = morningFeeling.toString()
                     it[createdAt] = now
                     it[updatedAt] = now
-                } get SleepLogs.id
+                } get SleepLog.id
 
                 Result.success(
                     toSleepLogDTO(
@@ -94,9 +94,9 @@ class SleepLogRepository {
      * @return SleepLogDTO or null if no sleep log record exists
      */
     fun getSleepLog(userId: Long, entryDate: LocalDate): SleepLogDTO? = transaction {
-        SleepLogs.selectAll()
+        SleepLog.selectAll()
             .where {
-                (SleepLogs.userId eq userId) and (SleepLogs.entryDate eq entryDate)
+                (SleepLog.userId eq userId) and (SleepLog.entryDate eq entryDate)
             }
             .singleOrNull()
             ?.toSleepLogDTO()
@@ -111,9 +111,9 @@ class SleepLogRepository {
      * @return List<SleepLogDTO>
      */
     fun getSleepLogs(userId: Long, startDate: LocalDate, endDate: LocalDate): List<SleepLogDTO> = transaction {
-        SleepLogs.selectAll()
-            .where { (SleepLogs.userId eq userId) and (SleepLogs.entryDate.between(startDate, endDate)) }
-            .orderBy(SleepLogs.entryDate to SortOrder.ASC)
+        SleepLog.selectAll()
+            .where { (SleepLog.userId eq userId) and (SleepLog.entryDate.between(startDate, endDate)) }
+            .orderBy(SleepLog.entryDate to SortOrder.ASC)
             .map { row -> row.toSleepLogDTO() }
     }
 

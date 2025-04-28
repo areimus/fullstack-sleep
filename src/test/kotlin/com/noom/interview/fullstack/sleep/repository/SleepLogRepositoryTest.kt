@@ -1,6 +1,6 @@
 package com.noom.interview.fullstack.sleep.repository
 
-import com.noom.interview.fullstack.sleep.models.SleepLogs
+import com.noom.interview.fullstack.sleep.models.SleepLog
 import com.noom.interview.fullstack.sleep.models.User
 import com.noom.interview.fullstack.sleep.util.MorningFeeling
 import org.jetbrains.exposed.sql.*
@@ -24,14 +24,14 @@ class SleepLogRepositoryTest {
             driver = "org.h2.Driver"
         )
         transaction {
-            SchemaUtils.create(User, SleepLogs)
+            SchemaUtils.create(User, SleepLog)
         }
     }
 
     @BeforeEach
     fun cleanDatabase() {
         transaction {
-            SleepLogs.deleteAll()
+            SleepLog.deleteAll()
             User.deleteAll()
         }
     }
@@ -162,35 +162,35 @@ class SleepLogRepositoryTest {
             }
 
             // Insert 3 sleep logs with different times and feelings
-            SleepLogs.insert {
-                it[SleepLogs.userId] = userId
-                it[SleepLogs.entryDate] = today.minusDays(1)
-                it[SleepLogs.bedTime] = LocalTime.of(23, 0)
-                it[SleepLogs.wakeTime] = LocalTime.of(6, 0)
-                it[SleepLogs.totalTimeInBed] = 25200
-                it[SleepLogs.morningFeeling] = "GOOD"
-                it[SleepLogs.createdAt] = now
-                it[SleepLogs.updatedAt] = now
+            SleepLog.insert {
+                it[SleepLog.userId] = userId
+                it[SleepLog.entryDate] = today.minusDays(1)
+                it[SleepLog.bedTime] = LocalTime.of(23, 0)
+                it[SleepLog.wakeTime] = LocalTime.of(6, 0)
+                it[SleepLog.totalTimeInBed] = 25200
+                it[SleepLog.morningFeeling] = "GOOD"
+                it[SleepLog.createdAt] = now
+                it[SleepLog.updatedAt] = now
             }
-            SleepLogs.insert {
-                it[SleepLogs.userId] = userId
-                it[SleepLogs.entryDate] = today.minusDays(2)
-                it[SleepLogs.bedTime] = LocalTime.of(23, 0)
-                it[SleepLogs.wakeTime] = LocalTime.of(7, 0)
-                it[SleepLogs.totalTimeInBed] = 28800
-                it[SleepLogs.morningFeeling] = "OK"
-                it[SleepLogs.createdAt] = now
-                it[SleepLogs.updatedAt] = now
+            SleepLog.insert {
+                it[SleepLog.userId] = userId
+                it[SleepLog.entryDate] = today.minusDays(2)
+                it[SleepLog.bedTime] = LocalTime.of(23, 0)
+                it[SleepLog.wakeTime] = LocalTime.of(7, 0)
+                it[SleepLog.totalTimeInBed] = 28800
+                it[SleepLog.morningFeeling] = "OK"
+                it[SleepLog.createdAt] = now
+                it[SleepLog.updatedAt] = now
             }
-            SleepLogs.insert {
-                it[SleepLogs.userId] = userId
-                it[SleepLogs.entryDate] = today.minusDays(3)
-                it[SleepLogs.bedTime] = LocalTime.of(21, 30)
-                it[SleepLogs.wakeTime] = LocalTime.of(6, 0)
-                it[SleepLogs.totalTimeInBed] = 27000
-                it[SleepLogs.morningFeeling] = "BAD"
-                it[SleepLogs.createdAt] = now
-                it[SleepLogs.updatedAt] = now
+            SleepLog.insert {
+                it[SleepLog.userId] = userId
+                it[SleepLog.entryDate] = today.minusDays(3)
+                it[SleepLog.bedTime] = LocalTime.of(21, 30)
+                it[SleepLog.wakeTime] = LocalTime.of(6, 0)
+                it[SleepLog.totalTimeInBed] = 27000
+                it[SleepLog.morningFeeling] = "BAD"
+                it[SleepLog.createdAt] = now
+                it[SleepLog.updatedAt] = now
             }
         }
 

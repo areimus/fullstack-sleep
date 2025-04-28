@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.javatime.time
 /**
  * Object presentation of the table "sleep_logs" available in the persistent storage.
  */
-object SleepLogs : Table("sleep_logs") {
+object SleepLog : Table("sleep_logs") {
     /**
      * Unique identifier for the sleep log entry
      */
