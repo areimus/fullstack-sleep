@@ -52,6 +52,14 @@ docker-compose up --build
 
 ----------
 
+## **API Documentation via Swagger**
+
+Swagger documentation is available at the following:
+
+``
+http://localhost:8080/swagger-ui/index.html
+``
+
 ## **API Testing with Postman**
 You can import the API Collection into Postman:
 
