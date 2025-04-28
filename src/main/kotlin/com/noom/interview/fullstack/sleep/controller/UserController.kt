@@ -11,6 +11,9 @@ class UserController(
     private val userRepository: UserRepository = UserRepository()
 ) {
 
+    /**
+     * Create a new user
+     */
     @PostMapping("/create")
     fun createUser(@RequestParam username: String): ResponseEntity<Any> {
         return userRepository.createUser(username)
@@ -23,6 +26,9 @@ class UserController(
             )
     }
 
+    /**
+     * Find and retrieve an existing user
+     */
     @GetMapping("/findByUsername")
     fun findByUsername(@RequestParam username: String): ResponseEntity<Any> {
         val user = userRepository.findByUsername(username)

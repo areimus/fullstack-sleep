@@ -1,6 +1,6 @@
 package com.noom.interview.fullstack.sleep.repository
 
-import com.noom.interview.fullstack.sleep.models.Users
+import com.noom.interview.fullstack.sleep.models.User
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -22,14 +22,14 @@ class UserRepositoryTest {
         )
 
         transaction {
-            SchemaUtils.create(Users)
+            SchemaUtils.create(User)
         }
     }
 
     @BeforeEach
     fun cleanDatabase() {
         transaction {
-            Users.deleteAll()
+            User.deleteAll()
         }
     }
 
@@ -48,8 +48,8 @@ class UserRepositoryTest {
     fun `should find user by username`() {
         val username = "testuser-repository-test2"
         transaction {
-            Users.insert {
-                it[Users.username] = username
+            User.insert {
+                it[User.username] = username
                 it[createdAt] = LocalDateTime.now()
             }
         }

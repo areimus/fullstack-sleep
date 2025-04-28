@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
+/**
+ *
+ */
 @RestController
 @RequestMapping("/users/{userId}/logs")
 class SleepLogController(
@@ -17,6 +20,9 @@ class SleepLogController(
 
 ) {
 
+    /**
+     * Create a new sleep log entry
+     */
     @PostMapping
     fun createSleepLog(
         @PathVariable userId: Long,
@@ -36,6 +42,9 @@ class SleepLogController(
         )
     }
 
+    /**
+     * Retrieve a single sleep log for the given user and date
+     */
     @GetMapping("/{entryDate}")
     fun getSleepLog(
         @PathVariable userId: Long,
@@ -50,6 +59,10 @@ class SleepLogController(
         }
     }
 
+    /**
+     * Retrieve last night's sleep log. The log created on the current date is assumed to be
+     * the last night's log
+     */
     @GetMapping("/lastNight")
     fun getLastNightSleepLog(
         @PathVariable userId: Long
@@ -65,6 +78,9 @@ class SleepLogController(
     }
 
 
+    /**
+     * Get a set of sleep logs for a given user and date range
+     */
     @GetMapping
     fun getSleepLogs(
         @PathVariable userId: Long,
@@ -79,6 +95,9 @@ class SleepLogController(
         return ResponseEntity.ok(logs)
     }
 
+    /**
+     * Set a sleep log averages report for a given number of days, defaults to 30.
+     */
     @GetMapping("/report")
     fun getSleepLogReport(
         @PathVariable userId: Long,
