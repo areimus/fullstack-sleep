@@ -147,4 +147,82 @@ class SleepLogRepositoryTest {
         assertTrue(exception is IllegalArgumentException)
         assertEquals("A sleep log for this user and date already exists.", exception?.message)
     }
+
+    @Test
+    fun `should calculate averages correctly with multiple sleep logs`() {
+        val userId = 1L
+        val now = LocalDateTime.now()
+        val today = now.toLocalDate()
+
+        transaction {
+            Users.insert {
+                it[id] = userId
+                it[username] = "test-user-averages"
+                it[createdAt] = now
+            }
+
+            // Insert 3 sleep logs with different times and feelings
+            SleepLogs.insert {
+                it[SleepLogs.userId] = userId
+                it[SleepLogs.entryDate] = today.minusDays(1)
+                it[SleepLogs.bedTime] = LocalTime.of(23, 0)
+                it[SleepLogs.wakeTime] = LocalTime.of(6, 0)
+                it[SleepLogs.totalTimeInBed] = 25200
+                it[SleepLogs.morningFeeling] = "GOOD"
+                it[SleepLogs.createdAt] = now
+                it[SleepLogs.updatedAt] = now
+            }
+            SleepLogs.insert {
+                it[SleepLogs.userId] = userId
+                it[SleepLogs.entryDate] = today.minusDays(2)
+                it[SleepLogs.bedTime] = LocalTime.of(23, 0)
+                it[SleepLogs.wakeTime] = LocalTime.of(7, 0)
+                it[SleepLogs.totalTimeInBed] = 28800
+                it[SleepLogs.morningFeeling] = "OK"
+                it[SleepLogs.createdAt] = now
+                it[SleepLogs.updatedAt] = now
+            }
+            SleepLogs.insert {
+                it[SleepLogs.userId] = userId
+                it[SleepLogs.entryDate] = today.minusDays(3)
+                it[SleepLogs.bedTime] = LocalTime.of(21, 30)
+                it[SleepLogs.wakeTime] = LocalTime.of(6, 0)
+                it[SleepLogs.totalTimeInBed] = 27000
+                it[SleepLogs.morningFeeling] = "BAD"
+                it[SleepLogs.createdAt] = now
+                it[SleepLogs.updatedAt] = now
+            }
+        }
+
+
+        val result = sleepLogRepository.getSleepLogReport(userId, 30)
+
+        assertNotNull(result)
+        result!!
+
+        assertEquals(today.minusDays(30), result.startDate)
+        assertEquals(today, result.endDate)
+
+        // Average total time in bed: (7 + 8 + 7.5) hours = 22.5 / 3 -> 7.5 hours -> 27000 seconds
+        assertEquals(27000, result.averageTotalTimeInBedSeconds)
+
+        // Average bed time: ((23 * 60) + (23 * 60) + (21.5 * 60)) / 3 / 60 -> 22.5
+        assertEquals(LocalTime.of(22, 30), result.averageBedTime)
+
+        // Average wake time: ((6 * 60) + (7 * 60) + (6 * 60)) / 3 / 60 -> 6.333
+        assertEquals(LocalTime.of(6, 20), result.averageWakeTime)
+
+        // Morning feeling frequencies
+        assertEquals(1, result.morningFeelingFrequencies["GOOD"])
+        assertEquals(1, result.morningFeelingFrequencies["OK"])
+        assertEquals(1, result.morningFeelingFrequencies["BAD"])
+    }
+
+    @Test
+    fun `should return null if no sleep logs exist for user`() {
+        val userId = 999L // A non-existing user ID
+        val result = sleepLogRepository.getSleepLogReport(userId, 30)
+
+        assertNull(result)
+    }
 }
